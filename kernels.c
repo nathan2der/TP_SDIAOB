@@ -4,7 +4,7 @@
 #include <SDL2/SDL_surface.h>
 #include <time.h>
 
-#include <cblas.h>
+//#include <cblas.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,7 +25,10 @@ unimplemented ()
 vector
 add_vectors (vector a, vector b)
 {
-  unimplemented ();
+  vector res;
+  res.x = a.x + b.x;
+  res.y = a.y + b.y;
+  return res; 
 }
 
 /*
@@ -38,7 +41,10 @@ add_vectors (vector a, vector b)
 vector
 scale_vector (f64 b, vector a)
 {
-  unimplemented ();
+  vector res;
+  res.x = a.x * b;
+  res.y = a.y * b;
+  return res;
 }
 
 /*
@@ -51,7 +57,10 @@ scale_vector (f64 b, vector a)
 vector
 sub_vectors (vector a, vector b)
 {
-  unimplemented ();
+  vector res; 
+  res.x = a.x - b.x;
+  res.y = a.y - b.y;
+  return res;
 }
 
 /*
@@ -63,7 +72,7 @@ sub_vectors (vector a, vector b)
 f64
 mod (vector a)
 {
-  unimplemented ();
+  return sqrt((a.x)*(a.x)+(a.y)*(a.y));
 }
 
 /*
@@ -100,7 +109,17 @@ init_system (i32 nbodies, f64 *masses, vector *positions, vector *velocities)
 void
 resolve_collisions (i32 nbodies, vector *positions, vector *velocities)
 {
-  unimplemented ();
+  int i,j;
+  for(i = 0; i < nbodies; i++){
+    for(j = 0; j < nbodies; j++){
+      vector pos = sub_vectors(positions[i], positions[j]);
+      if(mod(pos) < DIM_WINDOW && i != j){
+        vector temp = velocities[i];
+        velocities[i] = velocities[j];
+        velocities[j] = temp;
+      }
+    }
+  }
 }
 
 //
@@ -108,14 +127,26 @@ void
 compute_accelerations (i32 nbodies, vector *accelerations, f64 *masses,
                        vector *positions)
 {
-  unimplemented ();
+  int i,j;
+  for(i = 0; i < nbodies; i++){
+    accelerations[i].x = 0;
+    accelerations[i].y = 0;
+    for(j = 0; j < nbodies; j++){
+      vector pos = sub_vectors(positions[i], positions[j]);
+      f64 scale = (GRAVITY * masses[i]) / (pow(mod(pos), 3) + 1e7);
+      accelerations[i] = add_vectors(accelerations[i],  scale_vector(scale, sub_vectors(positions[j], positions[i])));
+    }
+  }
 }
 
 //
 void
 compute_velocities (i32 nbodies, vector *velocities, vector *accelerations)
 {
-  unimplemented ();
+  int i,j;
+  for(i = 0; i < nbodies; i++){
+    velocities[i] = add_vectors( velocities[i], accelerations[i]);
+  }
 }
 
 /*
@@ -133,7 +164,10 @@ void
 compute_positions (i32 nbodies, vector *positions, vector *velocities,
                    vector *accelerations)
 {
-  unimplemented ();
+  int i, j;
+  for(i = 0; i < nbodies; i++){
+    positions[i] = add_vectors( positions[i],add_vectors( velocities[i],scale_vector(1.0/2.0, accelerations[i])));
+  }
 }
 
 /*
