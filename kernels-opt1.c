@@ -143,8 +143,8 @@ compute_accelerations (i32 nbodies, vector *accelerations, f64 *masses,
     f64 cst = GRAVITY * masses[i]; //constant sur i
     for(j = 0; j < nbodies; j++){
       vector direction = sub_vectors(positions[j], positions[i]);
-      f64 dist = (direction.x)*(direction.x)+(direction.y)*(direction.y);
-      f64 denom = dist*dist +1e7;
+      f64 dist = mod(direction);
+      f64 denom = dist*dist*dist +1e7;
       accelerations[i] =add_vectors(accelerations[i],scale_vector((cst/denom),direction));
     }
   }

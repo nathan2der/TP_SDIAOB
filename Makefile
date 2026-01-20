@@ -1,4 +1,4 @@
-CFLAGS = -lSDL2 -lm 
+CFLAGS = -lSDL2 -lm
 CC=gcc
 OBJECTS = render.o kernels-opt.o random.o
 
