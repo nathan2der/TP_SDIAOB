@@ -122,7 +122,7 @@ resolve_collisions (i32 nbodies, vector *positions, vector *velocities)
   for(i = 0; i < nbodies; i++){
     for(j = 0; j < nbodies; j++){
       vector pos = sub_vectors(positions[i], positions[j]);
-      if(mod(pos) < DIM_WINDOW && i != j){
+      if((pos.x*pos.x+pos.y*pos.y) < DIM_WINDOW*DIM_WINDOW && i != j){
         vector temp = velocities[i];
         velocities[i] = velocities[j];
         velocities[j] = temp;
@@ -143,7 +143,7 @@ compute_accelerations (i32 nbodies, vector *accelerations, f64 *masses,
     f64 cst = GRAVITY * masses[i]; //constant sur i
     for(j = 0; j < nbodies; j++){
       vector direction = sub_vectors(positions[j], positions[i]);
-      f64 dist = mod(direction);
+      f64 dist = sqrt(direction.x*direction.x+direction.y*direction.y);
       f64 denom = dist*dist*dist +1e7;
       accelerations[i] =add_vectors(accelerations[i],scale_vector((cst/denom),direction));
     }
