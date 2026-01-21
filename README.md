@@ -20,6 +20,8 @@ version 20 janvier
 Ajout de kernels-opt2.c et de checkposition 
 
 
+    _la distance euclidienne entre i et j est la meme que la distance entre j et i donc une seule soustration suffit.
+    
     _suppresion de scale vectors (pas utile,au contraire on veut limiter les appels de fonctions)
     
     _je sors les calucls constants de la boucle i (dans compute acceleration) et je calcule qu'une seule difference de vecteurs de position car le module d'un vecteur (i vers j) egale au module d'un vecteur (j,i), ils ont la meme distance euclidienne. => petit gain de 15 fps ( environ 57 fps).
