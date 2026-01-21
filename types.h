@@ -3,7 +3,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define GRAVITY 1
+#define GRAVITY 10
 #define DIM_WINDOW 800
 
 typedef int32_t i32;

@@ -1,6 +1,6 @@
-CFLAGS = -lSDL2 -lm
+CFLAGS = -O3 -lSDL2 -lm -mavx2 -mfma
 CC=gcc
-OBJECTS = render.o kernels-opt1.o random.o
+OBJECTS = render.o kernels.o random.o
 
 all: nbody
 	./nbody
@@ -19,4 +19,4 @@ clean:
 	rm -f *.o
 	rm -f *.gch
 
-.PHONY: nbody kernels-opt1 clean debug all
+.PHONY: nbody kernels clean debug all
