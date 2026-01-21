@@ -118,11 +118,18 @@ init_system (i32 nbodies, f64 *masses, vector *positions, vector *velocities)
 void
 resolve_collisions (i32 nbodies, vector *positions, vector *velocities)
 {
-  int i,j;
-  for(i = 0; i < nbodies; i++){
-    for(j = 0; j < nbodies; j++){
-      vector pos = sub_vectors(positions[i], positions[j]);
-      if((pos.x*pos.x+pos.y*pos.y) < DIM_WINDOW*DIM_WINDOW && i != j){
+  const f64 COLLISION_THRESHOLD = 10.0; // Rayon de 2 particules
+  const f64 THRESHOLD_SQ = COLLISION_THRESHOLD * COLLISION_THRESHOLD;
+  
+  // Ne tester que i < j pour éviter les doubles échanges
+  for(int i = 0; i < nbodies; i++){
+    for(int j = i + 1; j < nbodies; j++){  // ← j commence à i+1 !
+      f64 dx = positions[i].x - positions[j].x;
+      f64 dy = positions[i].y - positions[j].y;
+      f64 dist_sq = dx*dx + dy*dy;
+      
+      if(dist_sq < THRESHOLD_SQ){  // Collision détectée
+        // Échange simple des vitesses
         vector temp = velocities[i];
         velocities[i] = velocities[j];
         velocities[j] = temp;
@@ -143,8 +150,8 @@ compute_accelerations (i32 nbodies, vector *accelerations, f64 *masses,
     f64 cst = GRAVITY * masses[i]; //constant sur i
     for(j = 0; j < nbodies; j++){
       vector direction = sub_vectors(positions[j], positions[i]);
-      f64 dist = sqrt(direction.x*direction.x+direction.y*direction.y);
-      f64 denom = dist*dist*dist +1e7;
+      f64 dist = sqrt(direction.x * direction.x + direction.y * direction.y);
+      f64 denom = dist*sqrt(dist) +1e7;
       accelerations[i] =add_vectors(accelerations[i],scale_vector((cst/denom),direction));
     }
   }
